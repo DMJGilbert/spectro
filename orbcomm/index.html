@@ -36,26 +36,28 @@
 	<script src="/js/jquery.magnific-popup.min.js"></script>
 	<!-- Main JS -->
 	<script src="/js/main.js"></script>
-    
-    <link rel="stylesheet" href="/css/arcgis.css">
-  <script src="/js/arcgis.js"></script>
 
-  <script>
-    require([
+	<script src="http://vjs.zencdn.net/5.9.2/video.js"></script>
+
+	<link rel="stylesheet" href="/css/arcgis.css">
+	<script src="/js/arcgis.js"></script>
+
+	<script>
+		require([
         "esri/Map",
         "esri/views/SceneView",
-        
+
         "esri/Camera",
         "esri/layers/GraphicsLayer",
         "esri/layers/SceneLayer",
         "esri/renderers/SimpleRenderer",
-        
+
         "esri/Graphic",
         "esri/geometry/Point",
         "esri/geometry/Polyline",
         "esri/geometry/Polygon",
         "esri/geometry/Circle",
-        
+
         "esri/symbols/PictureMarkerSymbol",
         "esri/symbols/SimpleMarkerSymbol",
         "esri/symbols/SimpleLineSymbol",
@@ -63,105 +65,109 @@
         "esri/symbols/PolygonSymbol3D",
         "esri/symbols/ObjectSymbol3DLayer",
         "esri/symbols/FillSymbol3DLayer",
-        
-        "dojo/dom", 
+
+        "dojo/dom",
         "dojo/dom-attr",
         "dojo/domReady!"
-        
+
     ],
-    function(Map, SceneView, Camera, GraphicsLayer, SceneLayer, SimpleRenderer, Graphic, Point, Polyline, Polygon, Circle,  
-        PictureMarkerSymbol, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, PolygonSymbol3D, ObjectSymbol3DLayer, FillSymbol3DLayer,
-             dom, domAttr) {
+			function (Map, SceneView, Camera, GraphicsLayer, SceneLayer, SimpleRenderer, Graphic, Point, Polyline, Polygon, Circle,
+				PictureMarkerSymbol, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, PolygonSymbol3D, ObjectSymbol3DLayer, FillSymbol3DLayer,
+				dom, domAttr) {
 
-    var scale = 50000000; 
-        
-    var map = new Map({
-        basemap: "gray"
-    });
+				var scale = 50000000;
 
-    //map.on('load', addRocket); 
-        
-  
-    var view = new SceneView({
-        container: "viewDiv",
-        map: map,
-        camera: new Camera({
-            position: new Point({
-              x: -0.17746710975334712,
-              y: 51.44543992422466,
-              z: 1266.7049653716385
-            }),
-            heading: 0.34445102566290225,
-            tilt: 86.95536300536367
-          }),
-        
-        scale: scale,
-        center: [-101.17, 21, 78]
-    });
-    
-        
-        /*
-        var symbol = new LineSymbol3D(
-          new PathSymbol3DLayer({
-            size: 20,
-            material: { color: "red" }
-          })
-        );
-        */
-        /*
+				var map = new Map({
+					basemap: "gray"
+				});
+
+				//map.on('load', addRocket);
+
+
+				var view = new SceneView({
+					container: "viewDiv",
+					map: map,
+					camera: new Camera({
+						position: new Point({
+							x: -0.17746710975334712,
+							y: 51.44543992422466,
+							z: 1266.7049653716385
+						}),
+						heading: 0.34445102566290225,
+						tilt: 86.95536300536367
+					}),
+
+					scale: scale,
+					center: [-101.17, 21, 78]
+				});
+
+
+				/*
+				var symbol = new LineSymbol3D(
+				  new PathSymbol3DLayer({
+				    size: 20,
+				    material: { color: "red" }
+				  })
+				);
+				*/
+				/*
         
         
 */
 
-        var blanks = function(a){return a.charAt(0) != '#' && a.charAt(0) != '-' && a.charAt(1) != '-' && a !== "";};
-        var missionName, stages, append, video;
-        missionName = "OrbComm_OG2_Launch_2";
-        
-        var pointsArray = [];
-        
-        $.ajax({
-            url: "Booster.dat",
-            async: false
-        }).done(function(response) {
-			var lines = response.split("\n").filter(blanks);
-			var maxQ = { value: 0 };
-            var counter = 0;
-			var points = lines.map(function(line, idx) {
-				var tokens = line.split("\t");
-				// undo the lat/lon -> xyz transform from FlightClub - it seems to be spherical rather than ellipsoidal
-				var relPos = [ +tokens[1], +tokens[2], +tokens[3] ];
-                //console.log(relPos);
-				var latitude = Math.PI / 2 - Math.atan2(Math.sqrt(relPos[0] * relPos[0] + relPos[1] * relPos[1]), relPos[2]);
-				var longitude = Math.atan2(relPos[1], relPos[0]);
-                var altitude = tokens[4] *1000;
-    
-                
-                /*var point = new Point({
-                    longitude: longitude, 
-                    latitude: latitude, 
-                    altitude: altitude
-                });
-                */
-                
-                var point = [
-                    parseFloat(tokens[1]) / -11.3905, 
-                    parseFloat(tokens[2]) / -194.01121,  // need plus
-                    parseFloat(tokens[4]) * 10000// * 10000
+				var blanks = function (a) {
+					return a.charAt(0) != '#' && a.charAt(0) != '-' && a.charAt(1) != '-' && a !== "";
+				};
+				var missionName, stages, append, video;
+				missionName = "OrbComm_OG2_Launch_2";
+
+				var pointsArray = [];
+
+				$.ajax({
+					url: "Booster.dat",
+					async: false
+				}).done(function (response) {
+					var lines = response.split("\n").filter(blanks);
+					var maxQ = {
+						value: 0
+					};
+					var counter = 0;
+					var points = lines.map(function (line, idx) {
+						var tokens = line.split("\t");
+						// undo the lat/lon -> xyz transform from FlightClub - it seems to be spherical rather than ellipsoidal
+						var relPos = [+tokens[1], +tokens[2], +tokens[3]];
+						//console.log(relPos);
+						var latitude = Math.PI / 2 - Math.atan2(Math.sqrt(relPos[0] * relPos[0] + relPos[1] * relPos[1]), relPos[2]);
+						var longitude = Math.atan2(relPos[1], relPos[0]);
+						var altitude = tokens[4] * 1000;
+
+
+						/*var point = new Point({
+						    longitude: longitude,
+						    latitude: latitude,
+						    altitude: altitude
+						});
+						*/
+
+						var point = [
+                    parseFloat(tokens[1]) / -11.3905,
+                    parseFloat(tokens[2]) / -194.01121, // need plus
+                    parseFloat(tokens[4]) * 10000 // * 10000
                 ];
-                /*
-                //var point = convertFromRadians(longitude, latitude, altitude);
-                var point = new Point(longitude, latitude, altitude); 
-                point.x = (point.x * 180 / Math.PI);
-                point.y = (point.y * 180 / Math.PI);
-                point.z = altitude * 10000;
-                */
-                //console.log(point);
-                pointsArray.push(point);
-                
-                //polyline.insertPoint(counter, 0, point);
-                //insertPoint(pathIndex, pointIndex, point)
-                
-                /*
+						/*
+						//var point = convertFromRadians(longitude, latitude, altitude);
+						var point = new Point(longitude, latitude, altitude);
+						point.x = (point.x * 180 / Math.PI);
+						point.y = (point.y * 180 / Math.PI);
+						point.z = altitude * 10000;
+						*/
+						//console.log(point);
+						pointsArray.push(point);
+
+						//polyline.insertPoint(counter, 0, point);
+						//insertPoint(pathIndex, pointIndex, point)
+
+						/*
 				// Cesium converts back to xyz anyway, but we'll get better positioning this way
 				var coord = Cesium.Cartesian3.fromRadians(longitude, latitude, tokens[4] * 1000);
 				coord.latitude = latitude * 180 / Math.PI;
@@ -177,77 +183,79 @@
 				}
 				return (coord);
                 */
-                counter++;
-			});
-            
-			/* add max Q indicator - figure out how accurate this is
-			if (maxQ.value > 0) {
-				viewer.entities.add({
-					position: maxQ.point,
-					point: { pixelSize: 10 },
-					label: {
-						text: "Max Q",
-						font: '12pt sans-serif',
-						horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-						pixelOffset: new Cesium.Cartesian2(15, 0)
+						counter++;
+					});
+
+					/* add max Q indicator - figure out how accurate this is
+					if (maxQ.value > 0) {
+						viewer.entities.add({
+							position: maxQ.point,
+							point: { pixelSize: 10 },
+							label: {
+								text: "Max Q",
+								font: '12pt sans-serif',
+								horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+								pixelOffset: new Cesium.Cartesian2(15, 0)
+							}
+						})
+					}*/
+
+
+					//viewer.scene.primitives.add(primitive);
+				}).error(callback);
+
+
+				function convertFromRadians(longitude, latitude, height, result) {
+
+					height = height || 0.0;
+					//var radiisq = new Point(6378137.0 * 6378137.0, 6378137.0 * 6378137.0, 6356752.3142451793 * 6356752.3142451793);
+					//var radiiSquared = defined(ellipsoid) ? ellipsoid.radiiSquared : wgs84RadiiSquared;
+
+					var cosLatitude = Math.cos(latitude);
+					var x = cosLatitude * Math.cos(longitude);
+					var y = cosLatitude * Math.sin(longitude);
+					var z = Math.sin(latitude);
+
+					/* Normalize */
+					var magnitude = Math.sqrt(x * x + y * y + z * z);
+					x = x / magnitude;
+					y = y / magnitude;
+					z = z / magnitude;
+					/*
+					            Cartesian3.multiplyComponents(radiiSquared, scratchN, scratchK);
+					            var gamma = Math.sqrt(Cartesian3.dot(scratchN, scratchK));
+					            scratchK = Cartesian3.divideByScalar(scratchK, gamma, scratchK);
+					            scratchN = Cartesian3.multiplyByScalar(scratchN, height, scratchN);
+					*/
+					if (result == undefined) {
+						result = new Point();
 					}
-				})
-			}*/
+					//return Point.add(scratchK, scratchN, result);
+					return new Point(x, y, z);
+				};
 
 
-			//viewer.scene.primitives.add(primitive);
-		}).error(callback);
 
-        
-        function convertFromRadians(longitude, latitude, height, result) {
 
-            height = height || 0.0;
-            //var radiisq = new Point(6378137.0 * 6378137.0, 6378137.0 * 6378137.0, 6356752.3142451793 * 6356752.3142451793);
-            //var radiiSquared = defined(ellipsoid) ? ellipsoid.radiiSquared : wgs84RadiiSquared;
+				function callback() {
+					console.log("error!!");
+				}
 
-            var cosLatitude = Math.cos(latitude);
-            var x = cosLatitude * Math.cos(longitude);
-            var y = cosLatitude * Math.sin(longitude);
-            var z = Math.sin(latitude);
-            
-            /* Normalize */
-            var magnitude = Math.sqrt(x * x + y * y + z * z);
-            x =  x / magnitude;
-            y =  y / magnitude;
-            z =  z / magnitude;
-/*
-            Cartesian3.multiplyComponents(radiiSquared, scratchN, scratchK);
-            var gamma = Math.sqrt(Cartesian3.dot(scratchN, scratchK));
-            scratchK = Cartesian3.divideByScalar(scratchK, gamma, scratchK);
-            scratchN = Cartesian3.multiplyByScalar(scratchN, height, scratchN);
-*/
-            if (result == undefined) {
-                result = new Point();
-            }
-            //return Point.add(scratchK, scratchN, result);
-            return new Point(x, y , z);
-        };
-        
-        
-        
-        
-        function callback(){
-            console.log("error!!");
-        }
-        
-        /*********************
-         * Add graphics layer
-         *********************/
+				/*********************
+				 * Add graphics layer
+				 *********************/
 
-        var graphicsLayer = new GraphicsLayer({ id: "circles" });
-        map.add(graphicsLayer);
-        
-        
-        /****************************
-         * Add a 3D polyline graphic
-         ****************************/
-        var convertedPoint = new Point(-80.577778, 28.488889)
-        /*
+				var graphicsLayer = new GraphicsLayer({
+					id: "circles"
+				});
+				map.add(graphicsLayer);
+
+
+				/****************************
+				 * Add a 3D polyline graphic
+				 ****************************/
+				var convertedPoint = new Point(-80.577778, 28.488889)
+					/*
         console.log(pointsArray);
         for(var i = 0; i < pointsArray.length; i++){
             pointsArray[i].x *= 1000;
@@ -255,155 +263,157 @@
             pointsArray[i].z *= 100;
         }
        */
-        var polyline = new Polyline([
+				var polyline = new Polyline([
             pointsArray
             //[68.59043075063661, -5.54622386981966, 0.303],
             //[68.59208146433447, -5.5464111883548295, 33000000.386]
         ]);
 
 
-        var polyline2 = new Polyline([
+				var polyline2 = new Polyline([
             [convertedPoint.x, convertedPoint.y, 0],
             [convertedPoint.x, convertedPoint.y, 1000000],
         ]);
-        console.log(polyline);
-        console.log(polyline2);
-        
-        lineSymbol = new SimpleLineSymbol({
-            color: [12, 34, 63],
-            width: 4
-        });
-        
-        circleLineSymbol = new SimpleLineSymbol({
-            color: [12, 34, 63],
-            width: 2
-        });
-        
-        var circleSymbol = new PolygonSymbol3D(
-            new FillSymbol3DLayer({
-                width: 100000,
-                height: 1000,
-                material: { color: "red" }
-            })
-        /*
-            symbolLayers: [new FillSymbol3DLayer({
-                width: 100000,
-                height: 1000,
-                material: { 
-                    color: "red" 
-                }
-            })]
-                */
-            /*
-            symbolLayers: [new ObjectSymbol3DLayer({
-              width: 100000,
-              height: 1000,
-              resource: {
-                primitive: "cylinder",
-                  numberOfPoints: 400
-              },
-              material: {
-                color: [255, 0, 0]
-              }
-            })]
-            */
-        );
-        
+				console.log(polyline);
+				console.log(polyline2);
+
+				lineSymbol = new SimpleLineSymbol({
+					color: [12, 34, 63],
+					width: 4
+				});
+
+				circleLineSymbol = new SimpleLineSymbol({
+					color: [12, 34, 63],
+					width: 2
+				});
+
+				var circleSymbol = new PolygonSymbol3D(
+					new FillSymbol3DLayer({
+						width: 100000,
+						height: 1000,
+						material: {
+							color: "red"
+						}
+					})
+					/*
+					    symbolLayers: [new FillSymbol3DLayer({
+					        width: 100000,
+					        height: 1000,
+					        material: {
+					            color: "red"
+					        }
+					    })]
+					        */
+					/*
+					symbolLayers: [new ObjectSymbol3DLayer({
+					  width: 100000,
+					  height: 1000,
+					  resource: {
+					    primitive: "cylinder",
+					      numberOfPoints: 400
+					  },
+					  material: {
+					    color: [255, 0, 0]
+					  }
+					})]
+					*/
+				);
 
 
-        var symbol = new FillSymbol3DLayer({
-            material: {
-                color: "red"   
-            } 
-        });
-        
-        
-        var rocket = new SimpleMarkerSymbol({
-            color: [226, 119, 40],
 
-            outline: new SimpleLineSymbol({
-              color: [255, 255, 255],
-              width: 2
-            })
-          });
+				var symbol = new FillSymbol3DLayer({
+					material: {
+						color: "red"
+					}
+				});
 
-       // var rocket = PictureMarkerSymbol("flacon9.png", 80, 200);
-        
-        var geomPoint = new Point(-80.58030815152979, 28.484555093491764, 0);
-        var rocketGraphic = new Graphic({
-            geometry: geomPoint,
-            symbol: rocket
-        });
-        rocketGraphic.setAttribute("name", "rocket");
-        
-        
-        var polylineGraphic = new Graphic({
-            geometry: polyline,
-            symbol: lineSymbol
-        });
-        polylineGraphic.setAttribute("name","flight");
-        
-        var circle = new Circle({
-            center: [convertedPoint.x, convertedPoint.y, 0],
-            radius: 100,
-            numberOfPoints: 400
-        });
-        var circle2 = new Circle({
-            center: [-80.58030815152979, 28.484555093491764, 0],
-            radius: 1000,
-            numberOfPoints: 400
-        });
-        var startCircleGraphic = new Graphic({
-            geometry: circle,
-            symbol: circleLineSymbol
-        });
-        var startCircleGraphic2 = new Graphic({
-            geometry: circle2,
-            symbol: circleLineSymbol
-        });
-    
-         
-        
-        console.log(rocketGraphic);
-        console.log(circleSymbol);
-        
-        graphicsLayer.add(startCircleGraphic);
-        graphicsLayer.add(startCircleGraphic2);
-        graphicsLayer.add(polylineGraphic);
-        graphicsLayer.add(rocketGraphic);
-        /*
-        graphicsLayer.on("click", function (evt) {  
-            console.log("Rocket clicked! ", evt.rocketGraphic.attributes.name);  
-        });
-        */
-        
-        
-        view.on("click", function(e){
-            if(e.graphic.attributes.name != null &&
-               e.graphic.attributes.name == "rocket"){
-                console.log("Circle clicked!!", e.graphic.attributes.name);
-            }
-             
-            if(e.graphic.attributes.name != null &&
-              e.graphic.attributes.name == "flight"){
-                console.log("Circle clicked!!", e.graphic.attributes.name);
-                
-                //prints the map coordinates of the clicked location
-                console.log(e.mapPoint);
-                //prints the screen coordinates of the clicked location
-                console.log(e.screenPoint);
-                
-                
-            }
-        });
-/*
-        map.on("click", function(evt){
-            console.log(evt.graphic.attributes.name); 
-        });
-        */
-        
-    });
-  </script>
+
+				var rocket = new SimpleMarkerSymbol({
+					color: [226, 119, 40],
+
+					outline: new SimpleLineSymbol({
+						color: [255, 255, 255],
+						width: 2
+					})
+				});
+
+				// var rocket = PictureMarkerSymbol("flacon9.png", 80, 200);
+
+				var geomPoint = new Point(-80.58030815152979, 28.484555093491764, 0);
+				var rocketGraphic = new Graphic({
+					geometry: geomPoint,
+					symbol: rocket
+				});
+				rocketGraphic.setAttribute("name", "rocket");
+
+
+				var polylineGraphic = new Graphic({
+					geometry: polyline,
+					symbol: lineSymbol
+				});
+				polylineGraphic.setAttribute("name", "flight");
+
+				var circle = new Circle({
+					center: [convertedPoint.x, convertedPoint.y, 0],
+					radius: 100,
+					numberOfPoints: 400
+				});
+				var circle2 = new Circle({
+					center: [-80.58030815152979, 28.484555093491764, 0],
+					radius: 1000,
+					numberOfPoints: 400
+				});
+				var startCircleGraphic = new Graphic({
+					geometry: circle,
+					symbol: circleLineSymbol
+				});
+				var startCircleGraphic2 = new Graphic({
+					geometry: circle2,
+					symbol: circleLineSymbol
+				});
+
+
+
+				console.log(rocketGraphic);
+				console.log(circleSymbol);
+
+				graphicsLayer.add(startCircleGraphic);
+				graphicsLayer.add(startCircleGraphic2);
+				graphicsLayer.add(polylineGraphic);
+				graphicsLayer.add(rocketGraphic);
+				/*
+				graphicsLayer.on("click", function (evt) {
+				    console.log("Rocket clicked! ", evt.rocketGraphic.attributes.name);
+				});
+				*/
+
+
+				view.on("click", function (e) {
+					if (e.graphic.attributes.name != null &&
+						e.graphic.attributes.name == "rocket") {
+						console.log("Circle clicked!!", e.graphic.attributes.name);
+					}
+
+					if (e.graphic.attributes.name != null &&
+						e.graphic.attributes.name == "flight") {
+						console.log("Circle clicked!!", e.graphic.attributes.name);
+
+						//prints the map coordinates of the clicked location
+						console.log(e.mapPoint);
+						//prints the screen coordinates of the clicked location
+						console.log(e.screenPoint);
+
+
+					}
+				});
+				/*
+				        map.on("click", function(evt){
+				            console.log(evt.graphic.attributes.name);
+				        });
+				        */
+
+			});
+	</script>
 </head>
 
 <body>
@@ -421,7 +431,7 @@
 	<div id="fh5co-page">
 		<div id="fh5co-wrap">
 			<header id="fh5co-hero" data-section="home" role="banner" style="background-color: #000; height: 1105px !important; position: relative;">
-                <div id="viewDiv"></div>
+				<div id="viewDiv"></div>
 				<div id="flightName">
 					ORBCOMM-2 Mission
 				</div>
@@ -448,36 +458,31 @@
 
 							<div class="point" onClick="setPosition(21.5 * 60)">
 								<div class="hover">
-									<h5>Launch</h5>
-									The nine Merlin 1D first stage engines are starting up
+									<h5>Launch</h5> The nine Merlin 1D first stage engines are starting up
 								</div>
 							</div>
 
 							<div class="point" style="left: 9%;" onClick="setPosition(24 * 60)">
 								<div class="hover">
-									<h5>Max Q</h5>
-									The Falcon is currently experiencing maximum stress and presssure
+									<h5>Max Q</h5> The Falcon is currently experiencing maximum stress and presssure
 								</div>
 							</div>
 
 							<div class="point" style="left: 24%;" onClick="setPosition(25.4 * 60)">
 								<div class="hover">
-									<h5>Second Engine Startup</h5>
-									Stage 1 and 2 separate, stage 2's engines start up and continue
+									<h5>Second Engine Startup</h5> Stage 1 and 2 separate, stage 2's engines start up and continue
 								</div>
 							</div>
 
 							<div class="point" style="left: 40%;" onClick="setPosition(27 * 60)">
 								<div class="hover">
-									<h5>Backboost Burn</h5>
-									Stage 1 relits 3 of its 9 engines to help slow the vehicle for landing
+									<h5>Backboost Burn</h5> Stage 1 relits 3 of its 9 engines to help slow the vehicle for landing
 								</div>
 							</div>
 
 							<div class="point" onClick="setPosition(32.6 * 60)" style="left: calc(100% - 12px);">
 								<div class="hover">
-									<h5>Landing</h5>
-									Stage 1 attempts to an experimental landing back on earth
+									<h5>Landing</h5> Stage 1 attempts to an experimental landing back on earth
 								</div>
 							</div>
 						</div>
@@ -546,7 +551,6 @@
 			if (selected) {
 				return;
 			}
-			console.log(this.currentTime())
 			var position = this.currentTime() - startTime - (95);
 			if (position > 0 && position < 580) {
 				rocket.style.left = (position * 2.17) - 23 + "px";
@@ -573,7 +577,6 @@
 				var left = (x_pos - x_elem);
 
 				var time = (23 * 60) + (left / 1225) * (600);
-				console.log(time)
 				myPlayer.currentTime(time)
 
 				if (left > -23 && left < 1225) {

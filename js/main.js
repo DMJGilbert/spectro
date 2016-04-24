@@ -648,29 +648,29 @@
 	// Document on load.
 	$(function(){
 
-		magnifPopup();
-		offCanvass();
-		mobileMenuOutsideClick();
+//		magnifPopup();
+//		offCanvass();
+//		mobileMenuOutsideClick();
 		footerFixed();
-		faqsAccordion();
-		carouselTestimony();
-		clickMenu();
-		HeaderToggle();
+//		faqsAccordion();
+//		carouselTestimony();
+//		clickMenu();
+//		HeaderToggle();
 
 		// Animations
-		introWayPoint();
-		clientWayPoint();
-		featuresWayPoint();
-		features2WayPoint();
-		counterWayPoint();
-		productsWayPoint();
-		features3WayPoint();
-		ctaWayPoint();
-		pricingWayPoint();
-		faqsWayPoint();
-		contentWayPoint();
-
-		navigationSection();
+//		introWayPoint();
+//		clientWayPoint();
+//		featuresWayPoint();
+//		features2WayPoint();
+//		counterWayPoint();
+//		productsWayPoint();
+//		features3WayPoint();
+//		ctaWayPoint();
+//		pricingWayPoint();
+//		faqsWayPoint();
+//		contentWayPoint();
+//
+//		navigationSection();
 
 	});
 
