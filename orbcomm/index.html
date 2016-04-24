@@ -72,6 +72,9 @@
               ObjectSymbol3DLayer, FillSymbol3DLayer
              ) {
 
+                var tokens;
+                
+            
 				var scale = 50000000;
 
 				var map = new Map({
@@ -130,7 +133,7 @@
 					};
 					var counter = 0;
 					var points = lines.map(function (line, idx) {
-						var tokens = line.split("\t");
+						tokens = line.split("\t");
 						// undo the lat/lon -> xyz transform from FlightClub - it seems to be spherical rather than ellipsoidal
 						var relPos = [+tokens[1], +tokens[2], +tokens[3]];
 						//console.log(relPos);
@@ -388,10 +391,29 @@
         
         
         view.on("click", function(evt){
-            if(evt.graphic.attributes.name !== undefined){
+            var coord;
+            console.log(evt.graphic);
+            if(evt.graphic.attributes.name != null){
                 console.log("object clicked!!", evt.graphic.attributes.name);
             
-                if(evt.graphic.attributes.name == "rocket"){
+                if(evt.graphic.attributes.name === "flight"){
+                    mapCoords = evt.mapPoint;
+                    
+                    var currentX = evt.mapPoint.x * -11.3905;
+                    var currentY = evt.mapPoint.y * -194.01121;
+                    var currentIndex;
+                    for(var i = 0; i < tokens[0].length; i++){
+                        if(parseFloat(tokens[0][i]) === currentX){
+                            currentIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    var currentTime = tokens[0][currentIndex];
+                    var currentAlt = tokens[4][currentIndex];
+                   
+                    console.log("x: "+currentX+", y: "+currentY+", z: "+currentAlt+", currentTime: "+currentTime)
+                    
                     //prints the map coordinates of the clicked location
                     console.log(evt.mapPoint);
                     //prints the screen coordinates of the clicked location
