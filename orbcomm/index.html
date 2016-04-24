@@ -37,7 +37,7 @@
 	<!-- Main JS -->
 	<script src="/js/main.js"></script>
 
-	<script src="http://vjs.zencdn.net/5.9.2/video.js"></script>
+	<script src="/js/video.js"></script>
 
 	<link rel="stylesheet" href="/css/arcgis.css">
 	<script src="/js/arcgis.js"></script>
@@ -49,7 +49,7 @@
 
         "esri/Camera",
         "esri/layers/GraphicsLayer",
-            
+
         "esri/Graphic",
         "esri/geometry/Point",
         "esri/geometry/Polyline",
@@ -66,11 +66,11 @@
         "dojo/domReady!"
 
     ],
-    function(Map, SceneView, Camera, GraphicsLayer, Graphic, 
-              Point, Polyline, Polygon, Circle, SimpleMarkerSymbol, 
-              SimpleLineSymbol, SimpleFillSymbol, PolygonSymbol3D, 
-              ObjectSymbol3DLayer, FillSymbol3DLayer
-             ) {
+			function (Map, SceneView, Camera, GraphicsLayer, Graphic,
+				Point, Polyline, Polygon, Circle, SimpleMarkerSymbol,
+				SimpleLineSymbol, SimpleFillSymbol, PolygonSymbol3D,
+				ObjectSymbol3DLayer, FillSymbol3DLayer
+			) {
 
 				var scale = 50000000;
 
@@ -385,33 +385,33 @@
 				*/
 
 
-        
-        
-        view.on("click", function(evt){
-            if(evt.graphic.attributes.name !== undefined){
-                console.log("object clicked!!", evt.graphic.attributes.name);
-            
-                if(evt.graphic.attributes.name == "rocket"){
-                    //prints the map coordinates of the clicked location
-                    console.log(evt.mapPoint);
-                    //prints the screen coordinates of the clicked location
-                    console.log(evt.screenPoint);
-                }
-            }
-        });
-/*
-        map.on("click", function(evt){
-            console.log(evt.graphic.attributes.name); 
-        });
-        */
-        
-    });
-  </script>
+
+
+				view.on("click", function (evt) {
+					if (evt.graphic.attributes.name !== undefined) {
+						console.log("object clicked!!", evt.graphic.attributes.name);
+
+						if (evt.graphic.attributes.name == "rocket") {
+							//prints the map coordinates of the clicked location
+							console.log(evt.mapPoint);
+							//prints the screen coordinates of the clicked location
+							console.log(evt.screenPoint);
+						}
+					}
+				});
+				/*
+				        map.on("click", function(evt){
+				            console.log(evt.graphic.attributes.name);
+				        });
+				        */
+
+			});
+	</script>
 </head>
 
 <body>
 
-	<div id="fh5co-menu" class="navbar" style="height: 50px;">
+	<div id="fh5co-menu" class="navbar" style="height: 50px;pointer-events:none;">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12">
@@ -423,13 +423,13 @@
 
 	<div id="fh5co-page">
 		<div id="fh5co-wrap">
-			<header id="fh5co-hero" data-section="home" role="banner" style="background-color: #000; height: 1105px !important; position: relative;">
-				<div id="viewDiv"></div>
+			<header id="fh5co-hero" data-section="home" role="banner" style="padding: 0px; background-color: #000; height: 1105px !important; position: relative;">
+				<div id="viewDiv" style="min-height:1200px;"></div>
 				<div id="flightName">
 					ORBCOMM-2 Mission
 				</div>
 
-				<video id="video" class="video-js" preload="auto" autoplay width="900" height="520" poster="/images/poster.jpg" data-setup="{}">
+				<video id="myVideo" class="video-js" preload="auto" autoplay width="900" height="520" poster="/images/poster.jpg" data-setup="{}">
 					<source src="/orbcomm-2.mp4" type='video/mp4'>
 					<p class="vjs-no-js">
 						To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -531,31 +531,42 @@
 	</div>
 
 	<script>
-		var myPlayer = videojs('video');
 		var rocket = document.getElementById('rocket');
 		var selected = null;
 		var x_pos = 0;
 		var x_elem = 0;
 		var startTime = 21.5 * 60;
-		myPlayer.currentTime(startTime);
-		myPlayer.playbackRate(2);
 
-		myPlayer.on('timeupdate', function () {
-			if (selected) {
-				return;
-			}
-			var position = this.currentTime() - startTime - (95);
-			if (position > 0 && position < 580) {
-				rocket.style.left = (position * 2.17) - 23 + "px";
-			} else if (position <= 0) {
-				rocket.style.left = "-23px";
-			} else if (position > 580) {
-				rocket.style.left = (580 * 2.17) - 23 + "px";
-			}
-			if (position > 600) {
-				myPlayer.pause();
-			}
-		});
+		var myPlayer;
+
+		$(function () {
+			myPlayer = videojs('myVideo').ready(function () {
+				this.currentTime(startTime);
+				this.playbackRate(2);
+				this.muted(true);
+			});
+
+
+			myPlayer.on('timeupdate', function () {
+				if (selected) {
+					return;
+				}
+				var position = this.currentTime() - startTime - (95);
+				if (position > 0 && position < 580) {
+					rocket.style.left = (position * 2.17) - 23 + "px";
+				} else if (position <= 0) {
+					rocket.style.left = "-23px";
+				} else if (position > 580) {
+					rocket.style.left = (580 * 2.17) - 23 + "px";
+				}
+
+				console.log(position)
+
+				if (position > 600) {
+					myPlayer.pause();
+				}
+			});
+		})
 
 		// Will be called when user starts dragging an element
 		function _drag_init(elem) {
