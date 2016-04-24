@@ -542,10 +542,68 @@
 
 			});
 	</script>
+    
+    <style>
+        #myVideo#myVideo{
+            display: none;
+        }
+        
+        /* rotate */
+        @keyframes rotate {
+          0%{
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+          }
+
+
+          100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+          }
+        }
+        @-webkit-keyframes rotate {
+            0%{
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+          }
+
+
+          100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+          }
+        }
+        
+        .quick-satellite{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("../images/QuickBird.png") no-repeat;
+            background-position: 25px 400px;
+            background-size: 70px 63px;
+
+            z-index: 999999999;
+            
+            
+            -webkit-animation: rotate 6s infinite;
+            -moz-animation: rotate 6s infinite;
+            animation: rotate 6s infinite;
+            
+            transform-origin: bottom left;
+            -webkit-transform-origin: bottom left;
+            
+            animation-timing-function: linear ;
+            -webkit-animation-timing-function: linear ;
+            animation-timing-function: linear ;
+        }
+
+    </style>
 </head>
 
 <body>
-
+    
 	<div id="fh5co-menu" class="navbar" style="height: 50px;pointer-events:none;">
 		<div class="container">
 			<div class="row">
@@ -557,6 +615,7 @@
 	</div>
 
 	<div id="fh5co-page">
+        <div class="quick-satellite"></div>
 		<div id="fh5co-wrap">
 			<header id="fh5co-hero" data-section="home" role="banner" style="padding: 0px; background-color: #000; height: 1105px !important; position: relative;">
 				<div id="viewDiv" style="min-height:1200px; position: relative; left: -50%;"></div>
