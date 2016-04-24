@@ -43,6 +43,10 @@
 	<script src="/js/arcgis.js"></script>
 
 	<script>
+		window.tokens;
+		lines = null;
+	</script>
+	<script>
 		require([
         "esri/Map",
         "esri/views/SceneView",
@@ -71,6 +75,9 @@
 				SimpleLineSymbol, SimpleFillSymbol, PolygonSymbol3D,
 				ObjectSymbol3DLayer, FillSymbol3DLayer
 			) {
+
+
+
 
 				var scale = 50000000;
 
@@ -124,19 +131,19 @@
 					url: "Booster.dat",
 					async: false
 				}).done(function (response) {
-					var lines = response.split("\n").filter(blanks);
+					lines = response.split("\n").filter(blanks);
 					var maxQ = {
 						value: 0
 					};
 					var counter = 0;
 					var points = lines.map(function (line, idx) {
-						var tokens = line.split("\t");
+						window.tokens = line.split("\t");
 						// undo the lat/lon -> xyz transform from FlightClub - it seems to be spherical rather than ellipsoidal
-						var relPos = [+tokens[1], +tokens[2], +tokens[3]];
+						var relPos = [+window.tokens[1], +window.tokens[2], +window.tokens[3]];
 						//console.log(relPos);
 						var latitude = Math.PI / 2 - Math.atan2(Math.sqrt(relPos[0] * relPos[0] + relPos[1] * relPos[1]), relPos[2]);
 						var longitude = Math.atan2(relPos[1], relPos[0]);
-						var altitude = tokens[4] * 1000;
+						var altitude = window.tokens[4] * 1000;
 
 
 						/*var point = new Point({
@@ -147,9 +154,9 @@
 						*/
 
 						var point = [
-                    parseFloat(tokens[1]) / -11.3905,
-                    parseFloat(tokens[2]) / -194.01121, // need plus
-                    parseFloat(tokens[4]) * 10000 // * 10000
+                    parseFloat(window.tokens[1]) / -11.3905,
+                    parseFloat(window.tokens[2]) / -194.01121, // need plus
+                    parseFloat(window.tokens[4]) * 10000 // * 10000
                 ];
 						/*
 						//var point = convertFromRadians(longitude, latitude, altitude);
@@ -325,7 +332,7 @@
 				});
 
 
-				var rocket = new SimpleMarkerSymbol({
+				var rocketMarker = new SimpleMarkerSymbol({
 					color: [226, 119, 40],
 
 					outline: new SimpleLineSymbol({
@@ -339,7 +346,7 @@
 				var geomPoint = new Point(-80.58030815152979, 28.484555093491764, 0);
 				var rocketGraphic = new Graphic({
 					geometry: geomPoint,
-					symbol: rocket
+					symbol: rocketMarker
 				});
 				rocketGraphic.setAttribute("name", "rocket");
 
@@ -386,12 +393,30 @@
 
 
 
-
 				view.on("click", function (evt) {
-					if (evt.graphic.attributes.name !== undefined) {
+					var coord;
+					console.log(evt.graphic);
+					if (evt.graphic.attributes.name != null) {
 						console.log("object clicked!!", evt.graphic.attributes.name);
 
-						if (evt.graphic.attributes.name == "rocket") {
+						if (evt.graphic.attributes.name === "flight") {
+							mapCoords = evt.mapPoint;
+
+							var currentX = evt.mapPoint.x * -11.3905;
+							var currentY = evt.mapPoint.y * -194.01121;
+							var currentIndex;
+							for (var i = 0; i < window.tokens[0].length; i++) {
+								if (parseFloat(window.tokens[1][i]) === currentX) {
+									currentIndex = i;
+									break;
+								}
+							}
+
+							var currentTime = window.tokens[0][currentIndex];
+							var currentAlt = window.tokens[4][currentIndex];
+
+							console.log("x: " + currentX + ", y: " + currentY + ", z: " + currentAlt + ", currentTime: " + currentTime)
+
 							//prints the map coordinates of the clicked location
 							console.log(evt.mapPoint);
 							//prints the screen coordinates of the clicked location
@@ -404,6 +429,121 @@
 				            console.log(evt.graphic.attributes.name);
 				        });
 				        */
+
+				var rocket = document.getElementById('rocket');
+				var selected = null;
+				var x_pos = 0;
+				var x_elem = 0;
+				var startTime = 21.5 * 60;
+				var myPlayer;
+
+				myPlayer = videojs('myVideo').ready(function () {
+					this.currentTime(startTime);
+					this.playbackRate(2);
+					this.muted(true);
+				});
+
+
+				myPlayer.on('timeupdate', function () {
+					if (selected) {
+						return;
+					}
+					var position = this.currentTime() - startTime - (95);
+					if (position > 0 && position < 580) {
+						rocket.style.left = (position * 2.17) - 23 + "px";
+					} else if (position <= 0) {
+						rocket.style.left = "-23px";
+					} else if (position > 580) {
+						rocket.style.left = (580 * 2.17) - 23 + "px";
+					}
+
+					console.log(position)
+
+					if (position > 600) {
+						myPlayer.pause();
+					}
+
+					if (lines) {
+						for (var i = 0; i < lines.length; i++) {
+							var tokens = lines[i].split("\t");
+
+							if (parseInt(tokens[0]) > position) {
+
+								console.log(tokens)
+
+								graphicsLayer.remove(rocketGraphic);
+
+								var x = parseFloat(tokens[1]) / -11.3905;
+								var y = parseFloat(tokens[2]) / -194.01121; // need plus
+								var z = parseFloat(tokens[4]) * 10000; // * 10000
+
+								var rocketMarker = new SimpleMarkerSymbol({
+									color: [226, 119, 40],
+
+									outline: new SimpleLineSymbol({
+										color: [255, 255, 255],
+										width: 2
+									})
+								});
+								var geomPoint = new Point(x, y, z);
+								rocketGraphic = new Graphic({
+									geometry: geomPoint,
+									symbol: rocketMarker
+								});
+								rocketGraphic.setAttribute("name", "rocket");
+
+								graphicsLayer.add(rocketGraphic);
+								break;
+							}
+						}
+					}
+				});
+
+
+				// Will be called when user starts dragging an element
+				function _drag_init(elem) {
+					selected = elem;
+					x_elem = x_pos - selected.offsetLeft;
+				}
+
+				// Will be called when user dragging an element
+				function _move_elem(e) {
+					x_pos = document.all ? window.event.clientX : e.pageX;
+					if (selected !== null) {
+						var left = (x_pos - x_elem);
+
+						var time = (23 * 60) + (left / 1225) * (600);
+						myPlayer.currentTime(time)
+
+						if (left > -23 && left < 1225) {
+							selected.style.left = left + 'px';
+						} else if (left < -23) {
+							selected.style.left = '-23px';
+						} else if (left > 1225) {
+							selected.style.left = '1225px';
+						}
+					}
+					myPlayer.play();
+				}
+
+				// Destroy the object when we are done
+				function _destroy() {
+					selected = null;
+				}
+
+				// Bind the functions...
+				document.getElementById('rocket').onmousedown = function () {
+					_drag_init(this);
+					return false;
+				};
+
+				document.onmousemove = _move_elem;
+				document.onmouseup = _destroy;
+
+				window.setPosition = function (time) {
+					myPlayer.currentTime(time);
+					myPlayer.pause();
+				}
 
 			});
 	</script>
@@ -529,90 +669,6 @@
 			</div>
 		</footer>
 	</div>
-
-	<script>
-		var rocket = document.getElementById('rocket');
-		var selected = null;
-		var x_pos = 0;
-		var x_elem = 0;
-		var startTime = 21.5 * 60;
-
-		var myPlayer;
-
-		$(function () {
-			myPlayer = videojs('myVideo').ready(function () {
-				this.currentTime(startTime);
-				this.playbackRate(2);
-				this.muted(true);
-			});
-
-
-			myPlayer.on('timeupdate', function () {
-				if (selected) {
-					return;
-				}
-				var position = this.currentTime() - startTime - (95);
-				if (position > 0 && position < 580) {
-					rocket.style.left = (position * 2.17) - 23 + "px";
-				} else if (position <= 0) {
-					rocket.style.left = "-23px";
-				} else if (position > 580) {
-					rocket.style.left = (580 * 2.17) - 23 + "px";
-				}
-
-				console.log(position)
-
-				if (position > 600) {
-					myPlayer.pause();
-				}
-			});
-		})
-
-		// Will be called when user starts dragging an element
-		function _drag_init(elem) {
-			selected = elem;
-			x_elem = x_pos - selected.offsetLeft;
-		}
-
-		// Will be called when user dragging an element
-		function _move_elem(e) {
-			x_pos = document.all ? window.event.clientX : e.pageX;
-			if (selected !== null) {
-				var left = (x_pos - x_elem);
-
-				var time = (23 * 60) + (left / 1225) * (600);
-				myPlayer.currentTime(time)
-
-				if (left > -23 && left < 1225) {
-					selected.style.left = left + 'px';
-				} else if (left < -23) {
-					selected.style.left = '-23px';
-				} else if (left > 1225) {
-					selected.style.left = '1225px';
-				}
-			}
-			myPlayer.play();
-		}
-
-		// Destroy the object when we are done
-		function _destroy() {
-			selected = null;
-		}
-
-		// Bind the functions...
-		document.getElementById('rocket').onmousedown = function () {
-			_drag_init(this);
-			return false;
-		};
-
-		document.onmousemove = _move_elem;
-		document.onmouseup = _destroy;
-
-		function setPosition(time) {
-			myPlayer.currentTime(time);
-			myPlayer.pause();
-		}
-	</script>
 
 </body>
 
