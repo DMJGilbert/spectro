@@ -42,6 +42,10 @@
 	<link rel="stylesheet" href="/css/arcgis.css">
 	<script src="/js/arcgis.js"></script>
 
+    <script>
+        window.tokens;
+        lines = null;
+    </script>
 	<script>
 		require([
         "esri/Map",
@@ -72,7 +76,7 @@
               ObjectSymbol3DLayer, FillSymbol3DLayer
              ) {
 
-                var tokens;
+                
                 
             
 				var scale = 50000000;
@@ -127,19 +131,19 @@
 					url: "Booster.dat",
 					async: false
 				}).done(function (response) {
-					var lines = response.split("\n").filter(blanks);
+					lines = response.split("\n").filter(blanks);
 					var maxQ = {
 						value: 0
 					};
 					var counter = 0;
 					var points = lines.map(function (line, idx) {
-						tokens = line.split("\t");
+						window.tokens = line.split("\t");
 						// undo the lat/lon -> xyz transform from FlightClub - it seems to be spherical rather than ellipsoidal
-						var relPos = [+tokens[1], +tokens[2], +tokens[3]];
+						var relPos = [+window.tokens[1], +window.tokens[2], +window.tokens[3]];
 						//console.log(relPos);
 						var latitude = Math.PI / 2 - Math.atan2(Math.sqrt(relPos[0] * relPos[0] + relPos[1] * relPos[1]), relPos[2]);
 						var longitude = Math.atan2(relPos[1], relPos[0]);
-						var altitude = tokens[4] * 1000;
+						var altitude = window.tokens[4] * 1000;
 
 
 						/*var point = new Point({
@@ -150,9 +154,9 @@
 						*/
 
 						var point = [
-                    parseFloat(tokens[1]) / -11.3905,
-                    parseFloat(tokens[2]) / -194.01121, // need plus
-                    parseFloat(tokens[4]) * 10000 // * 10000
+                    parseFloat(window.tokens[1]) / -11.3905,
+                    parseFloat(window.tokens[2]) / -194.01121, // need plus
+                    parseFloat(window.tokens[4]) * 10000 // * 10000
                 ];
 						/*
 						//var point = convertFromRadians(longitude, latitude, altitude);
@@ -402,15 +406,15 @@
                     var currentX = evt.mapPoint.x * -11.3905;
                     var currentY = evt.mapPoint.y * -194.01121;
                     var currentIndex;
-                    for(var i = 0; i < tokens[0].length; i++){
-                        if(parseFloat(tokens[0][i]) === currentX){
+                    for(var i = 0; i < window.tokens[0].length; i++){
+                        if(parseFloat(window.tokens[1][i]) === currentX){
                             currentIndex = i;
                             break;
                         }
                     }
                     
-                    var currentTime = tokens[0][currentIndex];
-                    var currentAlt = tokens[4][currentIndex];
+                    var currentTime = window.tokens[0][currentIndex];
+                    var currentAlt = window.tokens[4][currentIndex];
                    
                     console.log("x: "+currentX+", y: "+currentY+", z: "+currentAlt+", currentTime: "+currentTime)
                     
@@ -553,6 +557,7 @@
 	</div>
 
 	<script>
+        
 		var myPlayer = videojs('video');
 		var rocket = document.getElementById('rocket');
 		var selected = null;
@@ -577,6 +582,22 @@
 			if (position > 600) {
 				myPlayer.pause();
 			}
+            
+            if(lines){
+                    for(var i = 0; i < lines.length; i++){
+                    if(lines[i][0] < position){
+                        var x = lines[i][1];
+                        var y = lines[i][2];
+                        var z = lines[i][4];
+                        rocket.geometry.x = x;
+                        rocket.geometry.y = y;
+                        rocket.geometry.z = z;
+                    }
+
+
+                }
+            }
+            
 		});
 
 		// Will be called when user starts dragging an element
