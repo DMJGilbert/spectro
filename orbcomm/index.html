@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Spectro</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google Webfonts -->
+	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="/css/animate.css">
+
+	<link rel="stylesheet" href="/css/style.css">
+
+	<link href="http://vjs.zencdn.net/5.9.2/video-js.css" rel="stylesheet">
+
+	<!-- jQuery -->
+	<script src="/js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="/js/jquery.easing.1.3.js"></script>
+	<!-- Magnific Popup -->
+	<script src="/js/jquery.magnific-popup.min.js"></script>
+	<!-- Main JS -->
+	<script src="/js/main.js"></script>
+</head>
+
+<body>
+
+	<div id="fh5co-menu" class="navbar" style="height: 50px;">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<a href="/" class="navbar-brand"><img style="width: 200px; display: block;" src="/images/logo_white.png"></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="fh5co-page">
+		<div id="fh5co-wrap">
+			<header id="fh5co-hero" data-section="home" role="banner" style="background-color: #000; height: 1105px !important; position: relative;">
+
+				<div id="flightName">
+					ORBCOMM-2 Mission
+				</div>
+
+				<video id="video" class="video-js" preload="auto" autoplay width="900" height="520" poster="/images/poster.jpg" data-setup="{}">
+					<source src="/orbcomm-2.mp4" type='video/mp4'>
+					<p class="vjs-no-js">
+						To view this video please enable JavaScript, and consider upgrading to a web browser that
+						<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+					</p>
+				</video>
+
+				<script src="http://vjs.zencdn.net/5.9.2/video.js"></script>
+			</header>
+			<!-- END .header -->
+
+			<div id="fh5co-main">
+				<div id="fh5co-clients">
+					<div class="container">
+						<div class="timeline">
+							<div id="rocket">
+								<i class="fa fa-rocket fa-large" aria-hidden="true"></i>
+							</div>
+
+							<div class="point" onClick="setPosition(21.5 * 60)">
+								<div class="hover">
+									<h5>Launch</h5>
+									The nine Merlin 1D first stage engines are starting up
+								</div>
+							</div>
+
+							<div class="point" style="left: 9%;" onClick="setPosition(24 * 60)">
+								<div class="hover">
+									<h5>Max Q</h5>
+									The Falcon is currently experiencing maximum stress and presssure
+								</div>
+							</div>
+
+							<div class="point" style="left: 24%;" onClick="setPosition(25.4 * 60)">
+								<div class="hover">
+									<h5>Second Engine Startup</h5>
+									Stage 1 and 2 separate, stage 2's engines start up and continue
+								</div>
+							</div>
+
+							<div class="point" style="left: 40%;" onClick="setPosition(27 * 60)">
+								<div class="hover">
+									<h5>Backboost Burn</h5>
+									Stage 1 relits 3 of its 9 engines to help slow the vehicle for landing
+								</div>
+							</div>
+
+							<div class="point" onClick="setPosition(32.6 * 60)" style="left: calc(100% - 12px);">
+								<div class="hover">
+									<h5>Landing</h5>
+									Stage 1 attempts to an experimental landing back on earth
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer id="fh5co-footer" style="">
+			<div class="fh5co-overlay"></div>
+			<div class="fh5co-footer-content">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-3 col-sm-4 col-md-push-3">
+							<h3 class="fh5co-lead">Team</h3>
+							<ul>
+								<li><a href="#">Matthieu Rigolot</a></li>
+								<li><a href="#">Darren Gilbert</a></li>
+								<li><a href="#">Orfeuo Lionor</a></li>
+							</ul>
+						</div>
+						<div class="col-md-3 col-sm-4 col-md-push-3">
+							<h3 class="fh5co-lead">&nbsp;</h3>
+							<ul>
+								<li><a href="#">Florian Rathgebar</a></li>
+								<li><a href="#">Simon Weppe</a></li>
+							</ul>
+						</div>
+						<div class="col-md-3 col-sm-4 col-md-push-3">
+							<h3 class="fh5co-lead">More Information</h3>
+							<ul>
+								<li><a href="https://2016.spaceappschallenge.org/">Space Apps Challenge</a></li>
+								<li><a href="http://spaceapps.london/">Space Apps London</a></li>
+								<li><a href="https://github.com/DMJGilbert/spectro">Github</a></li>
+							</ul>
+						</div>
+
+						<div class="col-md-3 col-sm-12 col-md-pull-9">
+							<div class="fh5co-footer-logo"><a href="index.html">Spectro</a></div>
+							<p class="fh5co-social-icons">
+								<a href="#"><i class="icon-twitter"></i></a>
+								<a href="#"><i class="icon-facebook"></i></a>
+								<a href="#"><i class="icon-instagram"></i></a>
+								<a href="#"><i class="icon-dribbble"></i></a>
+								<a href="#"><i class="icon-youtube"></i></a>
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<script>
+		var myPlayer = videojs('video');
+		var rocket = document.getElementById('rocket');
+		var selected = null;
+		var x_pos = 0;
+		var x_elem = 0;
+		var startTime = 21.5 * 60;
+		myPlayer.currentTime(startTime);
+		myPlayer.playbackRate(2);
+
+		myPlayer.on('timeupdate', function () {
+			if (selected) {
+				return;
+			}
+			console.log(this.currentTime())
+			var position = this.currentTime() - startTime - (95);
+			if (position > 0 && position < 580) {
+				rocket.style.left = (position * 2.17) - 23 + "px";
+			} else if (position <= 0) {
+				rocket.style.left = "-23px";
+			} else if (position > 580) {
+				rocket.style.left = (580 * 2.17) - 23 + "px";
+			}
+			if (position > 600) {
+				myPlayer.pause();
+			}
+		});
+
+		// Will be called when user starts dragging an element
+		function _drag_init(elem) {
+			selected = elem;
+			x_elem = x_pos - selected.offsetLeft;
+		}
+
+		// Will be called when user dragging an element
+		function _move_elem(e) {
+			x_pos = document.all ? window.event.clientX : e.pageX;
+			if (selected !== null) {
+				var left = (x_pos - x_elem);
+
+				var time = (23 * 60) + (left / 1225) * (600);
+				console.log(time)
+				myPlayer.currentTime(time)
+
+				if (left > -23 && left < 1225) {
+					selected.style.left = left + 'px';
+				} else if (left < -23) {
+					selected.style.left = '-23px';
+				} else if (left > 1225) {
+					selected.style.left = '1225px';
+				}
+			}
+			myPlayer.play();
+		}
+
+		// Destroy the object when we are done
+		function _destroy() {
+			selected = null;
+		}
+
+		// Bind the functions...
+		document.getElementById('rocket').onmousedown = function () {
+			_drag_init(this);
+			return false;
+		};
+
+		document.onmousemove = _move_elem;
+		document.onmouseup = _destroy;
+
+		function setPosition(time) {
+			myPlayer.currentTime(time);
+			myPlayer.pause();
+		}
+	</script>
+
+</body>
+
+</html>
